@@ -36,6 +36,7 @@ class BinarySearchTree:
 
     def print_in_order(self):
         self._in_order(self.root)
+        print()
 
     def _in_order(self, current_node):
         if current_node is not None:
@@ -45,6 +46,7 @@ class BinarySearchTree:
 
     def print_pre_order(self):
         self._pre_order(self.root)
+        print()
 
     def _pre_order(self, current_node):
         if current_node is not None:
@@ -54,6 +56,7 @@ class BinarySearchTree:
 
     def print_post_order(self):
         self._post_order(self.root)
+        print()
 
     def _post_order(self, current_node):
         if current_node is not None:
@@ -92,15 +95,10 @@ class BinarySearchTree:
 
     def set_value(self, key, value):
         res = self.search(key)
-
-        try:
-            if res:
-                return res.value
-            else:
-                raise KeyError('Key not found in the tree')
-
-        except KeyError:
-            print(KeyError)
+        if res:
+            return res.value
+        else:
+            raise KeyError('Key not found in the tree')
 
     def delete_node(self, key):
         if self.size > 1:
@@ -126,8 +124,8 @@ class BinarySearchTree:
             else:
                 current_node.parent.right_child = None
         elif current_node.has_both_children():  # interior
-            succ = current_node.find_successor()
-            succ.splice_out()
+            succ = self.find_successor(current_node)
+            self.splice_out(succ)
             current_node.key = succ.key
             current_node.value = succ.value
         else:  # this node has one child
@@ -156,42 +154,41 @@ class BinarySearchTree:
                                                 current_node.right_child.left_child,
                                                 current_node.right_child.right_child)
 
-    def splice_out(self):
-        if self.is_leaf_node():
-            if self.is_left_child():
-                self.parent.left_child = None
+    def splice_out(self, current_node):
+        if current_node.is_leaf_node():
+            if current_node.is_left_child():
+                current_node.parent.left_child = None
             else:
-                self.parent.right_child = None
-        elif self.has_any_children():
-            if self.has_left_child():
-                if self.is_left_child():
-                    self.parent.left_child = self.left_child
+                current_node.parent.right_child = None
+        elif current_node.has_any_children():
+            if current_node.has_left_child():
+                if current_node.is_left_child():
+                    current_node.parent.left_child = current_node.left_child
                 else:
-                    self.parent.right_child = self.left_child
-                self.left_child.parent = self.parent
+                    current_node.parent.right_child = current_node.left_child
+                    current_node.left_child.parent = current_node.parent
             else:
-                if self.is_left_child():
-                    self.parent.left_child = self.right_child
+                if current_node.is_left_child():
+                    current_node.parent.left_child = current_node.right_child
                 else:
-                    self.parent.right_child = self.right_child
-                self.right_child.parent = self.parent
+                    current_node.parent.right_child = current_node.right_child
+                    current_node.right_child.parent = current_node.parent
 
-    def find_successor(self):
+    def find_successor(self, current_node):
         succ = None
-        if self.has_right_child():
-            succ = self.right_child.find_min()
+        if current_node.has_right_child():
+            succ = self.find_min(current_node.right_child)
         else:
-            if self.parent:
-                if self.is_left_child():
-                    succ = self.parent
+            if current_node.parent:
+                if current_node.is_left_child():
+                    succ = current_node.parent
                 else:
-                    self.parent.right_child = None
-                    succ = self.parent.find_successor()
-                    self.parent.right_child = self
+                    current_node.parent.right_child = None
+                    succ = current_node.parent.find_successor()
+                    current_node.parent.right_child = current_node
         return succ
 
-    def find_min(self):
-        current_node = self
+    def find_min(self, current_node):
         while current_node.has_left_child():
-            current = current_node.left_child
+            current_node = current_node.left_child
         return current_node
