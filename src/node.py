@@ -22,6 +22,12 @@ class Node:
     def is_leaf_node(self):
         return not (self.right_child or self.left_child)
 
+    def is_left_child(self):
+        return self == self.parent.left_child
+
+    def is_right_child(self):
+        return self == self.parent.right_child
+
     def has_any_children(self):
         return self.right_child or self.left_child
 
@@ -51,4 +57,3 @@ class Node:
 
     def put_value(self):
         return self.value
-
